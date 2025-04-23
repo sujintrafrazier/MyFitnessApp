@@ -55,6 +55,7 @@ public class ExerciseDiaryTests : IDisposable
         weekdaySelect.SelectByValue("2");
 
         this._driver.FindElement(By.CssSelector("input[type='submit']")).Click();
+        Assert.Equal("Tuesday - MyFitnessApp", this._driver.Title);
 
         Thread.Sleep(5000);
     }
