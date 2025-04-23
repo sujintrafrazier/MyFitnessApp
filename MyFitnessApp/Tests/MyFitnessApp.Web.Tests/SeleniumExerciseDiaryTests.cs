@@ -1,0 +1,75 @@
+using System;
+using OpenQA.Selenium;
+using System.Threading; 
+using OpenQA.Selenium.Support.UI;
+using OpenQA.Selenium.Chrome;
+using Xunit;
+
+public class ExerciseDiaryTests : IDisposable
+{
+    private readonly IWebDriver _driver;
+    private readonly string _url;
+
+    public ExerciseDiaryTests()
+    {
+        ChromeOptions options = new ChromeOptions();
+        options.AddArgument("--headless");
+        this._driver = new ChromeDriver();
+        this._url = "https://localhost:5001/";
+    }
+
+    [Fact]
+    public void TestExerciseDiary()
+    {
+        this._driver.Navigate().GoToUrl(this._url + "Identity/Account/Login");
+
+        var usernameField = this._driver.FindElement(By.Id("Input_Username"));
+        var passwordField = this._driver.FindElement(By.Id("Input_Password"));
+
+        this.SimulateTyping(usernameField, "testuser");
+        this.SimulateTyping(passwordField, "123456");
+
+        var loginButton = this._driver.FindElement(By.CssSelector("button[type='submit']"));
+        loginButton.Click();
+
+        this._driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+        this._driver.Navigate().GoToUrl(this._url + "Exercises/All");
+        this._driver.Navigate().GoToUrl(this._url + "Exercises/Add/60");
+
+        var weightField = this._driver.FindElement(By.Id("Weight"));
+        weightField.Clear();
+        weightField.SendKeys("150");
+
+        var repetitionsField = this._driver.FindElement(By.Id("Repetitions"));
+        repetitionsField.Clear();
+        repetitionsField.SendKeys("10");
+
+        var setsField = this._driver.FindElement(By.Id("Sets"));
+        setsField.Clear();
+        setsField.SendKeys("3");
+
+        var wait = new WebDriverWait(this._driver, TimeSpan.FromSeconds(5));
+        wait.Until(d => d.FindElement(By.Id("WeekDay")));
+
+        var weekdaySelect = new SelectElement(this._driver.FindElement(By.Id("WeekDay")));
+        weekdaySelect.SelectByValue("2");
+
+        this._driver.FindElement(By.CssSelector("input[type='submit']")).Click();
+
+        Thread.Sleep(5000);
+    }
+
+    private void SimulateTyping(IWebElement element, string text)
+    {
+        foreach (char character in text)
+        {
+            element.SendKeys(character.ToString());
+            Thread.Sleep(150);
+        }
+    }
+
+    public void Dispose()
+    {
+        this._driver.Quit();
+    }
+}
