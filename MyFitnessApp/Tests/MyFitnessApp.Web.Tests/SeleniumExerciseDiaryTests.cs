@@ -36,20 +36,19 @@ public class ExerciseDiaryTests : IDisposable
         this._driver.Navigate().GoToUrl(this._url + "Exercises/All");
         this._driver.Navigate().GoToUrl(this._url + "Exercises/Add/60");
 
-        var weightField = this._driver.FindElement(By.Id("Weight"));
+        var wait = new WebDriverWait(this._driver, TimeSpan.FromSeconds(10));
+
+        var weightField = wait.Until(d => d.FindElement(By.Id("Weight")));
         weightField.Clear();
         weightField.SendKeys("150");
 
-        var repetitionsField = this._driver.FindElement(By.Id("Repetitions"));
+        var repetitionsField = wait.Until(d => d.FindElement(By.Id("Repetitions")));
         repetitionsField.Clear();
         repetitionsField.SendKeys("10");
 
-        var setsField = this._driver.FindElement(By.Id("Sets"));
+        var setsField = wait.Until(d => d.FindElement(By.Id("Sets")));
         setsField.Clear();
         setsField.SendKeys("3");
-
-        var wait = new WebDriverWait(this._driver, TimeSpan.FromSeconds(5));
-        wait.Until(d => d.FindElement(By.Id("WeekDay")));
 
         var weekdaySelect = new SelectElement(this._driver.FindElement(By.Id("WeekDay")));
         weekdaySelect.SelectByValue("2");
